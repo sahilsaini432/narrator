@@ -1,0 +1,71 @@
+# --- Secrets & credentials ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+id_rsa*
+id_ed25519*
+secrets/
+secrets.*
+credentials*
+*.token
+.npmrc
+.pypirc
+
+# --- User data (uploads, generated audio, DB, logs, models) ---
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.log
+logs/
+uploads/
+audio/
+models/
+*.wav
+*.mp3
+*.onnx
+*.pt
+*.pth
+*.safetensors
+*.bin
+
+# --- Python ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# --- Node / web ---
+web/node_modules/
+web/dist/
+node_modules/
+dist/
+*.local
+
+# --- Machine-specific / local tooling ---
+.claude/
+CLAUDE.md
+*.local.ps1
+.vscode/
+.idea/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+PLAN.md

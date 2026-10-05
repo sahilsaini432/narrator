@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pymupdf
+ebooklib
+beautifulsoup4
+lxml
+trafilatura
+httpx
+kokoro-onnx
+lameenc
+numpy
+rapidocr-onnxruntime
+pillow
