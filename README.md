@@ -12,7 +12,23 @@ The first run creates a Python environment, installs dependencies, and builds th
 
 The first time you play something, Narrator downloads the Kokoro voice model (about 350 MB) into `data\models\`. That request takes a minute. After that everything runs on your PC.
 
+Options: `-Lan` (also listen on your Wi-Fi), `-Port 9000` (default 8000), `-Rebuild` (force a fresh build of the web app, e.g. after changing `web/`).
+
 Requirements: Python 3.12 (3.11+ works) and Node.js 20+.
+
+## Run it as a Windows service
+
+To have Narrator start at boot and restart if it crashes, install it as a service with [NSSM](https://nssm.cc/). Run `.\start.ps1` once first so the Python environment and web build exist.
+
+```powershell
+.\install-service.ps1                 # localhost only (use with tailscale serve)
+.\install-service.ps1 -Lan            # also reachable on your Wi-Fi
+.\install-service.ps1 -Port 9000      # different port
+.\install-service.ps1 -Nssm D:\tools\nssm.exe   # default: E:\nssm-2.24\win64\nssm.exe
+.\install-service.ps1 -Remove         # stop and uninstall
+```
+
+It asks for Administrator rights. Logs go to `data\logs\service.log`. After changing `web/`, rebuild with `.\start.ps1 -Rebuild` (then stop it) and restart the service.
 
 ## Use it on your iPhone
 
@@ -57,5 +73,5 @@ Audio plays through a normal `<audio>` element and the Media Session API, so it 
 
 - Scanned PDFs (images with no text layer) can't be read; there is no OCR yet.
 - Web pages are a one-time snapshot. Pages that need JavaScript or a login to show their text can't be read, and addresses on your own network are blocked. Some sites (e.g. Wikipedia) refuse automated requests.
-- Voices are English (US and UK).
+- Voices are English only. Pick one in the player: Heart, Bella, Nicole (US female), Michael, Adam (US male), Emma (UK female), George (UK male). Audio is cached per voice.
 - All data lives in `data\`: back it up to keep your library.
