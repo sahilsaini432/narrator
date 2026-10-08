@@ -1,6 +1,6 @@
 # Narrator
 
-Listen to your PDFs, papers, EPUBs, web articles, and photos of printed books. Narrator keeps a library of everything you add and remembers the page (and second) you stopped at. It's a web app you install to your iPhone Home Screen (a PWA). Your PC does the speech generation with [Kokoro](https://github.com/hexgrad/kokoro), so it's free and works offline once the model is downloaded.
+Listen to your PDFs, papers, EPUBs, web articles, pasted text, and photos of printed books. Narrator keeps a library of everything you add and remembers the page (and second) you stopped at. It's a web app you install to your iPhone Home Screen (a PWA). Your PC does the speech generation with [Kokoro](https://github.com/hexgrad/kokoro), so it's free and works offline once the model is downloaded.
 
 ## Run it
 
@@ -57,7 +57,7 @@ Audio plays through a normal `<audio>` element and the Media Session API, so it 
 
 ## How it works
 
-- `server/` is FastAPI + SQLite. PDFs are read with PyMuPDF, EPUBs with ebooklib, and web pages are fetched and stripped to the article text with trafilatura (tap **Link** in the library and paste an address). **Photos** (tap **Photos**) go into a folder, which is a book whose pages are your photos: pick an existing folder or create one, then take or choose pictures. Each photo is read with RapidOCR on your PC and becomes one page, in the order added. Each PDF page (or about 2,000 characters of an EPUB or web article) is one "page".
+- `server/` is FastAPI + SQLite. PDFs are read with PyMuPDF, EPUBs with ebooklib, and web pages are fetched and stripped to the article text with trafilatura (tap **Link** in the library and paste an address). **Text** lets you paste any block of text (an email, notes, a chat) with an optional title; without one, it's named after its first words. **Photos** (tap **Photos**) go into a folder, which is a book whose pages are your photos: pick an existing folder or create one, then take or choose pictures. Each photo is read with RapidOCR on your PC and becomes one page, in the order added. Each PDF page (or about 2,000 characters of an EPUB, web article or pasted text) is one "page".
 - Each page is turned into an MP3 the first time it's needed, cached in `data\audio\`, and the next two pages are generated in the background while you listen.
 - Your position saves every 5 seconds, on pause, on page change, and when the app is hidden.
 - `web/` is the React app. For development: `cd web; npm run dev` (proxies `/api` to port 8000).

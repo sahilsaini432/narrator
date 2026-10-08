@@ -211,6 +211,28 @@ def extract_web(url: str):
     return title, author, _paginate(paragraphs)
 
 
+TEXT_TITLE_CHARS = 60
+
+
+def extract_text(text: str, title: str = ""):
+    """Pasted text -> (title, pages). Untitled pastes are named after their opening words."""
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    if re.search(r"\n[ \t]*\n", text):
+        # Blank lines separate paragraphs; single line breaks are hard wraps (e.g. copied from a PDF).
+        paragraphs = _clean(text).split("\n\n")
+    else:
+        # No blank lines: each line is its own paragraph (e.g. copied from a web page).
+        paragraphs = [re.sub(r"\s+", " ", l).strip() for l in text.split("\n")]
+    paragraphs = [p for p in paragraphs if p]
+    if not paragraphs:
+        raise ValueError("There's no text to read")
+    if not title:
+        title = paragraphs[0]
+        if len(title) > TEXT_TITLE_CHARS:
+            title = title[:TEXT_TITLE_CHARS].rsplit(" ", 1)[0].rstrip(" ,.;:-") + "…"
+    return title, _paginate(paragraphs)
+
+
 def extract(path: Path):
     ext = path.suffix.lower()
     if ext == ".pdf":

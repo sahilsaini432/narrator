@@ -105,6 +105,21 @@ def add_web_page(body: UrlIn):
     return db.get_book(db.add_book(title, author, "web", url, pages))
 
 
+class TextIn(BaseModel):
+    title: str = Field(default="", max_length=200)
+    text: str = Field(min_length=1, max_length=1_000_000)
+
+
+@app.post("/api/books/text")
+def add_text(body: TextIn):
+    try:
+        title, pages = extract.extract_text(body.text, body.title.strip())
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
+    # Pasted text has no file behind it, so the file path is left empty.
+    return db.get_book(db.add_book(title, "", "text", "", pages))
+
+
 @app.get("/api/books/{book_id}")
 def get_book(book_id: int):
     return _book_or_404(book_id)
