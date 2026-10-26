@@ -47,7 +47,8 @@ body {
 
 button,
 select,
-input {
+input,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -119,6 +120,29 @@ button:disabled {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
+}
+
+.paste-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paste-form input,
+.paste-form textarea {
+  min-height: 40px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.paste-form textarea {
+  resize: vertical;
+}
+
+.paste-form .btn {
+  align-self: flex-end;
 }
 
 .notice {

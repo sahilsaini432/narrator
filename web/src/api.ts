@@ -2,7 +2,7 @@ export interface Book {
   id: number
   title: string
   author: string
-  format: 'pdf' | 'epub' | 'web' | 'photos'
+  format: 'pdf' | 'epub' | 'web' | 'photos' | 'text'
   page_count: number
   added_at: number
   last_opened_at: number | null
@@ -60,6 +60,12 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
+    }).then(json<Book>),
+  addText: (text: string, title: string) =>
+    fetch('/api/books/text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, title }),
     }).then(json<Book>),
   createFolder: (title: string) =>
     fetch('/api/folders', {

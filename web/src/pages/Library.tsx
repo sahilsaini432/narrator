@@ -22,8 +22,10 @@ export default function Library({ onOpen, onManage, onStorage }: Props) {
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState<string | null>(null)
   const [photoSheet, setPhotoSheet] = useState(false)
-  const [linkOpen, setLinkOpen] = useState(false)
+  const [openForm, setOpenForm] = useState<'link' | 'text' | null>(null)
   const [linkUrl, setLinkUrl] = useState('')
+  const [pasteText, setPasteText] = useState('')
+  const [pasteTitle, setPasteTitle] = useState('')
   const fileInput = useRef<HTMLInputElement>(null)
 
   const refresh = useCallback(() => {
@@ -63,13 +65,33 @@ export default function Library({ onOpen, onManage, onStorage }: Props) {
     try {
       await api.addUrl(url)
       setLinkUrl('')
-      setLinkOpen(false)
+      setOpenForm(null)
     } catch (err) {
       setError(`${url}: ${(err as Error).message}`)
     }
     setUploading(null)
     refresh()
   }
+
+  async function onAddText(e: React.FormEvent) {
+    e.preventDefault()
+    if (!pasteText.trim()) return
+    const label = pasteTitle.trim() || 'pasted text'
+    setError('')
+    setUploading(label)
+    try {
+      await api.addText(pasteText, pasteTitle.trim())
+      setPasteText('')
+      setPasteTitle('')
+      setOpenForm(null)
+    } catch (err) {
+      setError(`${label}: ${(err as Error).message}`)
+    }
+    setUploading(null)
+    refresh()
+  }
+
+  const toggleForm = (form: 'link' | 'text') => setOpenForm((cur) => (cur === form ? null : form))
 
   async function remove(book: Book) {
     if (!window.confirm(`Delete "${book.title}"? Its saved place and audio will be removed.`)) return
@@ -81,7 +103,10 @@ export default function Library({ onOpen, onManage, onStorage }: Props) {
     <main className="screen">
       <header className="topbar">
         <h1>Library</h1>
-        <button className="btn" onClick={() => setLinkOpen((o) => !o)} disabled={!!uploading}>
+        <button className="btn" onClick={() => toggleForm('text')} disabled={!!uploading}>
+          Text
+        </button>
+        <button className="btn" onClick={() => toggleForm('link')} disabled={!!uploading}>
           Link
         </button>
         <button className="btn" onClick={() => setPhotoSheet(true)} disabled={!!uploading}>
@@ -100,7 +125,31 @@ export default function Library({ onOpen, onManage, onStorage }: Props) {
         />
       </header>
 
-      {linkOpen && (
+      {openForm === 'text' && (
+        <form className="paste-form" onSubmit={onAddText}>
+          <input
+            type="text"
+            placeholder="Title (optional)"
+            value={pasteTitle}
+            onChange={(e) => setPasteTitle(e.target.value)}
+            maxLength={200}
+            disabled={!!uploading}
+          />
+          <textarea
+            autoFocus
+            rows={8}
+            placeholder="Paste text to listen to"
+            value={pasteText}
+            onChange={(e) => setPasteText(e.target.value)}
+            disabled={!!uploading}
+          />
+          <button className="btn primary" type="submit" disabled={!!uploading || !pasteText.trim()}>
+            Add
+          </button>
+        </form>
+      )}
+
+      {openForm === 'link' && (
         <form className="link-form" onSubmit={onAddUrl}>
           <input
             type="text"
@@ -125,7 +174,7 @@ export default function Library({ onOpen, onManage, onStorage }: Props) {
       {books && books.length === 0 && !error && (
         <div className="empty">
           <p>Nothing here yet.</p>
-          <p className="muted">Add a PDF, EPUB, web page link or photos of a printed book and Narrator will read it to you.</p>
+          <p className="muted">Add a PDF, EPUB, web page link, pasted text or photos of a printed book and Narrator will read it to you.</p>
         </div>
       )}
 
